@@ -99,6 +99,7 @@ def upload():
     usage = '%prog metadata.json data.csv [edgemart]'
     op = optparse.OptionParser(usage=usage)
     op.add_option('--wsdl', default=WSDL)
+    op.add_option('--container', default=None)
     options, args = op.parse_args()
     username, password, token = get_credentials(op)
 
@@ -112,7 +113,10 @@ def upload():
 
     uploader = AnalyticsCloudUploader(metadata, data)
     uploader.login(options.wsdl, username, password, token)
-    uploader.upload(edgemart)
+    kwargs = {}
+    if options.container:
+        kwargs["container"] = options.container
+    uploader.upload(edgemart, **kwargs)
 
 
 def table():
