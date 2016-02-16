@@ -19,7 +19,7 @@ def _stringify(s, encoding, errors):
     if isinstance(s, datetime):
         return s.strftime('%Y-%m-%d %H:%M:%S')
 
-    return unicodecsv._stringify(s, encoding, errors)
+    return _stringify(s, encoding, errors)
 
 
 def _stringify_list(l, encoding, errors='strict'):
