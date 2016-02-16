@@ -18,7 +18,15 @@ def _stringify(s, encoding, errors):
     # customize the date
     if isinstance(s, datetime):
         return s.strftime('%Y-%m-%d %H:%M:%S')
-    return unicodecsv._stringify(s, encoding, errors)
+    if s is None:
+        return ''
+    if isinstance(s, unicode):
+        return s.encode(encoding, errors)
+    elif isinstance(s, numbers.Number):
+        pass  # let csv.QUOTE_NONNUMERIC do its thing.
+    elif not isinstance(s, str):
+        s = str(s)
+    return s
 
 
 def _stringify_list(l, encoding, errors='strict'):
