@@ -29,7 +29,7 @@ def _stringify_list(l, encoding, errors='strict'):
         raise csv.Error(str(e))
 
 
-class AnalyticsWriter(unicodecsv.UnicodeWriter):
+class AnalyticsWriter(unicodecsv.writer):
     def writerow(self, row):
         # override writerow so we can properly serialize dates
         return self.writer.writerow(_stringify_list(row, self.encoding, self.encoding_errors))
