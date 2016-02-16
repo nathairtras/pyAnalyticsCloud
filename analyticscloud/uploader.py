@@ -18,12 +18,7 @@ def _stringify(s, encoding, errors):
     # customize the date
     if isinstance(s, datetime):
         return s.strftime('%Y-%m-%d %H:%M:%S')
-    if type(s)==unicode:
-        return s.encode(encoding)
-    elif type(s) != str:
-        return str(s)
-    else:
-        return s
+    return unicodecsv._stringify(s, encoding, errors)
 
 
 def _stringify_list(l, encoding, errors='strict'):
