@@ -58,11 +58,11 @@ class AnalyticsCloudUploader(object):
         self.client = SforcePartnerClient(wsdl)
         self.client.login(username, password, token)
 
-    def upload(self, edgemart):
+    def upload(self, edgemart, **kwargs):
         output = StringIO()
         writer = AnalyticsWriter(output, encoding='utf-8')
 
-        self.start(edgemart, self.metadata)
+        self.start(edgemart, self.metadata, **kwargs)
 
         biggest_record = 0
         for record in self.data:
