@@ -83,12 +83,12 @@ class AnalyticsCloudUploader(object):
 
         self.complete()
 
-    def start(self, edgemart, metadata):
+    def start(self, edgemart, metadata, **kwargs):
         log.info('starting upload %s', edgemart)
         self.parts = []
         obj = self.client.generateObject('InsightsExternalData')
         obj.EdgemartAlias = edgemart
-        obj.EdgemartContainer = ''
+        obj.EdgemartContainer = kwargs.get("container", "SharedApp")
         obj.MetadataJson = b64encode(json.dumps(metadata))
         obj.Format = 'CSV'
         obj.Operation = 'Overwrite'
