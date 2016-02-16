@@ -84,7 +84,7 @@ def dump():
     schema, table = get_schema_table(op, args)
 
     if options.output != sys.stdout:
-        options.output = open(options.output, 'w', newline='')
+        options.output = open(options.output, 'w')
 
     writer = AnalyticsWriter(options.output, encoding='utf-8')
     for record in db.data_generator(dburl, table, schema=schema):
