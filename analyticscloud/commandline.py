@@ -5,8 +5,9 @@ import json
 import optparse
 import os.path
 import sys
-
 import unicodecsv
+import warnings
+from sqlalchemy import exc as sa_exc
 
 from analyticscloud.uploader import AnalyticsCloudUploader, DataFileChunker, AnalyticsWriter
 from importers import db
@@ -70,6 +71,7 @@ def metadata():
 
 
 def dump():
+    squelch_warn = True
     usage = '%prog dburl table'
 
     op = optparse.OptionParser(usage=usage)
@@ -77,22 +79,27 @@ def dump():
                   help='output data to FILENAME', default=sys.stdout)
     op.add_option('-l', '--limit', metavar='COUNT', type='int',
                   help='limit dump to COUNT records')
-
     options, args = op.parse_args()
 
     dburl = get_arg(op, args, 'missing dburl, [postgres://username:password@localhost/database]')
-    schema, table = get_schema_table(op, args)
-
-    if options.output != sys.stdout:
-        options.output = open(options.output, 'w')
-
-    writer = AnalyticsWriter(options.output, encoding='utf-8')
-    for record in db.data_generator(dburl, table, schema=schema):
-        writer.writerow(record)
-        if options.limit is not None:
-            options.limit -= 1
-            if options.limit <= 0:
-                break
+    
+    with warnings.catch_warnings():
+        if squelch_warn:
+            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
+            
+        schema, table = get_schema_table(op, args)
+        
+        if options.output != sys.stdout:
+            options.output = open(options.output, 'w')
+            
+        writer = AnalyticsWriter(options.output, encoding='utf-8')
+        
+        for record in db.data_generator(dburl, table, schema=schema):
+            writer.writerow(record)
+            if options.limit is not None:
+                options.limit -= 1
+                if options.limit <= 0:
+                    break
 
 
 def upload():
